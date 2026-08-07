@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IC Decay · DEMO</title>
+<style>
+  :root {
+    --ground:#f6f3ec; --surface:#fffdf8; --surface-2:#f0ebe0;
+    --ink:#23201a; --ink-2:#6b655a; --ink-3:#9a9284;
+    --hair:rgba(35,32,26,.12); --hair-strong:rgba(35,32,26,.26);
+    --up:#c0392b; --down:#147d6f; --accent:#a9791f;
+    --accent-soft:rgba(169,121,31,.12); --faded:0.30;
+    --shadow:0 1px 2px rgba(35,32,26,.06),0 6px 20px rgba(35,32,26,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:#17150f; --surface:#201d16; --surface-2:#2a261d;
+      --ink:#ece7db; --ink-2:#a9a293; --ink-3:#746d5e;
+      --hair:rgba(236,231,219,.12); --hair-strong:rgba(236,231,219,.24);
+      --up:#e15b4c; --down:#2aa697; --accent:#d6a94a;
+      --accent-soft:rgba(214,169,74,.14);
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 22px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--ground); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",
+      "Segoe UI","Noto Sans CJK SC",system-ui,sans-serif;
+    line-height:1.6; font-variant-numeric:tabular-nums; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:920px; margin:0 auto; padding:40px 24px 64px; }
+  .eyebrow { font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin:0 0 8px; }
+  h1 { font-size:clamp(24px,4vw,32px); font-weight:700; margin:0 0 6px;
+    letter-spacing:-.01em; text-wrap:balance; }
+  .meta { color:var(--ink-2); font-size:14px; margin:0; }
+  .meta b { color:var(--ink); font-weight:600; }
+  .warn { margin:16px 0 0; padding:10px 14px; border-radius:10px; font-size:13px;
+    background:rgba(192,57,43,.10); border:1px solid rgba(192,57,43,.30); color:var(--up); }
+  .callout { margin:24px 0 32px; padding:18px 20px; border-radius:12px;
+    background:var(--accent-soft); border:1px solid var(--hair);
+    display:flex; flex-wrap:wrap; gap:6px 28px; align-items:baseline; }
+  .callout .lead { font-weight:600; font-size:14px; color:var(--accent);
+    letter-spacing:.02em; width:100%; margin-bottom:2px; }
+  .callout .stat { font-size:14px; color:var(--ink-2); }
+  .callout .stat b { color:var(--ink); font-weight:700; font-size:16px; }
+  section { margin-top:40px; }
+  .sec-head { display:flex; align-items:baseline; justify-content:space-between;
+    gap:12px; margin-bottom:6px; flex-wrap:wrap; }
+  h2 { font-size:17px; font-weight:700; margin:0; letter-spacing:-.005em; }
+  .sec-note { font-size:13px; color:var(--ink-3); margin:0; }
+  .card { background:var(--surface); border:1px solid var(--hair); border-radius:14px;
+    box-shadow:var(--shadow); padding:20px 20px 12px; margin-top:14px; }
+  .chart-scroll { overflow-x:auto; }
+  svg { display:block; width:100%; min-width:520px; height:auto; }
+  .tbl-scroll { overflow-x:auto; margin-top:14px; }
+  table { border-collapse:collapse; width:100%; min-width:480px; font-size:13px; }
+  th,td { padding:8px 10px; text-align:right; white-space:nowrap; }
+  th { color:var(--ink-3); font-weight:600; font-size:12px; letter-spacing:.03em;
+    border-bottom:1px solid var(--hair-strong); }
+  td { border-bottom:1px solid var(--hair); color:var(--ink-2); }
+  th:first-child,td:first-child { text-align:left; }
+  td.up { color:var(--up); } td.down { color:var(--down); }
+  .caveats { margin-top:16px; padding:18px 20px; border-radius:12px;
+    background:var(--surface-2); border:1px solid var(--hair); }
+  .caveats h3 { margin:0 0 10px; font-size:13px; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:700; }
+  .caveats ul { margin:0; padding-left:18px; }
+  .caveats li { font-size:13px; color:var(--ink-2); margin-bottom:6px; }
+  footer { margin-top:40px; padding-top:16px; border-top:1px solid var(--hair);
+    font-size:12px; color:var(--ink-3); display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:8px; }
+  @media (max-width:560px) { .wrap { padding:28px 16px 48px; } .callout { gap:4px 18px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">因子 IC 衰减诊断</p>
+    <h1>DEMO · IC Decay &amp; Stability</h1>
+    <p class="meta">窗口 <b>2020-01-02</b> → <b>2021-07-14</b> &nbsp;·&nbsp; IC 观测 <b>400</b> &nbsp;·&nbsp; 标的 <b>50</b></p>
+    
+  </header>
+  <div class="callout"><div class="lead">核心指标</div><span class="stat">均值 IC <b>+0.9047</b></span><span class="stat">年化 ICIR <b>+451.00</b></span><span class="stat">NW-t <b>+609.67</b></span><span class="stat">命中率 <b>100%</b></span><span class="stat">半衰期 <b>5.6 日</b></span><span class="stat">强度 <b>strong</b></span></div>
+  <section>
+    <div class="sec-head">
+      <h2>滚动 IC</h2>
+      <p class="sec-note">窗口 60 交易日 · 日度截面 Spearman</p>
+    </div>
+    <div class="card">
+      <div class="chart-scroll">
+        <svg id="roll" viewBox="0 0 760 280" role="img" aria-label="滚动IC折线图"></svg>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="sec-head">
+      <h2>IC 衰减曲线</h2>
+      <p class="sec-note">多周期均值 IC · 指数衰减拟合（若可）</p>
+    </div>
+    <div class="card">
+      <div class="chart-scroll">
+        <svg id="decay" viewBox="0 0 760 280" role="img" aria-label="IC衰减曲线"></svg>
+      </div>
+      <div class="tbl-scroll">
+        <table id="dtbl">
+          <thead><tr><th>周期</th><th>均值 IC</th><th>IC 标准差</th><th>观测数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <div class="caveats">
+    <h3>严谨性说明</h3>
+    <ul><li>IC 是历史截面预测力的统计描述，不是买卖指令；衰减快不代表立刻失效，慢也不保证持续有效。</li><li>日度 IC 观测数 n=400。</li><li>Newey-West t 使用 lag=5（处理 IC 序列自相关）；重叠收益周期会进一步抬高自相关。</li><li>多周期 fwd_ret_h 若由同一价格序列滚动生成，存在重叠持有期，衰减曲线解释需谨慎。</li><li>防未来函数：因子只能使用截至当日可知信息；本脚本不做取数，由用户保证面板无前瞻。</li><li>本结果不构成投资建议。</li></ul>
+  </div>
+  <footer>
+    <span>由 skill-factor-ic-decay 生成</span>
+    <span>事实优先 · 不输出买卖指令</span>
+  </footer>
+</div>
+<script>
+  const ROLL = [{"date": "2020-01-29", "mean_ic": 0.9139447779111645}, {"date": "2020-01-30", "mean_ic": 0.9134602412393529}, {"date": "2020-01-31", "mean_ic": 0.9134650223725853}, {"date": "2020-02-03", "mean_ic": 0.9125758129338691}, {"date": "2020-02-04", "mean_ic": 0.9131772709083633}, {"date": "2020-02-05", "mean_ic": 0.9134501800720288}, {"date": "2020-02-06", "mean_ic": 0.9138166035645027}, {"date": "2020-02-07", "mean_ic": 0.9129785247432307}, {"date": "2020-02-10", "mean_ic": 0.9125741725261534}, {"date": "2020-02-11", "mean_ic": 0.9125851719998344}, {"date": "2020-02-12", "mean_ic": 0.9123105242096838}, {"date": "2020-02-13", "mean_ic": 0.9121465360337683}, {"date": "2020-02-14", "mean_ic": 0.9103571428571429}, {"date": "2020-02-17", "mean_ic": 0.9085161337262178}, {"date": "2020-02-18", "mean_ic": 0.9081110091095262}, {"date": "2020-02-19", "mean_ic": 0.9066177328074088}, {"date": "2020-02-20", "mean_ic": 0.9069921301854075}, {"date": "2020-02-21", "mean_ic": 0.9069387755102041}, {"date": "2020-02-24", "mean_ic": 0.9077677386744171}, {"date": "2020-02-25", "mean_ic": 0.9083645765998707}, {"date": "2020-02-26", "mean_ic": 0.9072773109243698}, {"date": "2020-02-27", "mean_ic": 0.9072620267619244}, {"date": "2020-02-28", "mean_ic": 0.9071880180643687}, {"date": "2020-03-02", "mean_ic": 0.9081001703006784}, {"date": "2020-03-03", "mean_ic": 0.909062534104551}, {"date": "2020-03-04", "mean_ic": 0.9091711351207149}, {"date": "2020-03-05", "mean_ic": 0.9092624876037371}, {"date": "2020-03-06", "mean_ic": 0.9094337309391842}, {"date": "2020-03-09", "mean_ic": 0.9104521808723489}, {"date": "2020-03-10", "mean_ic": 0.9105529558762281}, {"date": "2020-03-11", "mean_ic": 0.911494837935174}, {"date": "2020-03-12", "mean_ic": 0.9123696537438505}, {"date": "2020-03-13", "mean_ic": 0.9127823437067134}, {"date": "2020-03-16", "mean_ic": 0.9122154522186232}, {"date": "2020-03-17", "mean_ic": 0.9125641367658175}, {"date": "2020-03-18", "mean_ic": 0.913031103350431}, {"date": "2020-03-19", "mean_ic": 0.9137197736237352}, {"date": "2020-03-20", "mean_ic": 0.9133379667656536}, {"date": "2020-03-23", "mean_ic": 0.9135356211450097}, {"date": "2020-03-24", "mean_ic": 0.9126538751093658}, {"date": "2020-03-25", "mean_ic": 0.9125026010404161}, {"date": "2020-03-26", "mean_ic": 0.911812725090036}, {"date": "2020-03-27", "mean_ic": 0.9125970388155262}, {"date": "2020-03-30", "mean_ic": 0.912686674669868}, {"date": "2020-03-31", "mean_ic": 0.9126866746698679}, {"date": "2020-04-01", "mean_ic": 0.9122016806722689}, {"date": "2020-04-02", "mean_ic": 0.9126210484193678}, {"date": "2020-04-03", "mean_ic": 0.9128931572629051}, {"date": "2020-04-06", "mean_ic": 0.9123985594237696}, {"date": "2020-04-07", "mean_ic": 0.9107418967587034}, {"date": "2020-04-08", "mean_ic": 0.9104169667867146}, {"date": "2020-04-09", "mean_ic": 0.910031212484994}, {"date": "2020-04-10", "mean_ic": 0.9086450580232093}, {"date": "2020-04-13", "mean_ic": 0.9080928371348539}, {"date": "2020-04-14", "mean_ic": 0.910375350140056}, {"date": "2020-04-15", "mean_ic": 0.9099319727891156}, {"date": "2020-04-16", "mean_ic": 0.9101320528211284}, {"date": "2020-04-17", "mean_ic": 0.9093061224489797}, {"date": "2020-04-20", "mean_ic": 0.9082480992396958}, {"date": "2020-04-21", "mean_ic": 0.9079167667066826}, {"date": "2020-04-22", "mean_ic": 0.9083121248499401}, {"date": "2020-04-23", "mean_ic": 0.9090596238495399}, {"date": "2020-04-24", "mean_ic": 0.9091844737895158}, {"date": "2020-04-27", "mean_ic": 0.9094101640656262}, {"date": "2020-04-28", "mean_ic": 0.9093429371748699}, {"date": "2020-04-29", "mean_ic": 0.9089427771108444}, {"date": "2020-04-30", "mean_ic": 0.9080208083233293}, {"date": "2020-05-01", "mean_ic": 0.9086066426570628}, {"date": "2020-05-04", "mean_ic": 0.9088499399759905}, {"date": "2020-05-05", "mean_ic": 0.9091540616246498}, {"date": "2020-05-06", "mean_ic": 0.9097110844337735}, {"date": "2020-05-07", "mean_ic": 0.9096486594637855}, {"date": "2020-05-08", "mean_ic": 0.9106234493797519}, {"date": "2020-05-11", "mean_ic": 0.9122272909163666}, {"date": "2020-05-12", "mean_ic": 0.9131332533013207}, {"date": "2020-05-13", "mean_ic": 0.9124737895158064}, {"date": "2020-05-14", "mean_ic": 0.9116750700280112}, {"date": "2020-05-15", "mean_ic": 0.9118703481392557}, {"date": "2020-05-18", "mean_ic": 0.911062024809924}, {"date": "2020-05-19", "mean_ic": 0.9103129251700681}, {"date": "2020-05-20", "mean_ic": 0.9108779511804721}, {"date": "2020-05-21", "mean_ic": 0.9102376950780312}, {"date": "2020-05-22", "mean_ic": 0.910498599439776}, {"date": "2020-05-25", "mean_ic": 0.909999199679872}, {"date": "2020-05-26", "mean_ic": 0.9092340936374549}, {"date": "2020-05-27", "mean_ic": 0.9095366146458584}, {"date": "2020-05-28", "mean_ic": 0.9094261704681873}, {"date": "2020-05-29", "mean_ic": 0.9093013205282112}, {"date": "2020-06-01", "mean_ic": 0.9085234093637455}, {"date": "2020-06-02", "mean_ic": 0.9079327731092436}, {"date": "2020-06-03", "mean_ic": 0.9065722288915566}, {"date": "2020-06-04", "mean_ic": 0.9064393757503001}, {"date": "2020-06-05", "mean_ic": 0.9057254901960784}, {"date": "2020-06-08", "mean_ic": 0.9062969187675071}, {"date": "2020-06-09", "mean_ic": 0.9062456982793117}, {"date": "2020-06-10", "mean_ic": 0.9060968387354943}, {"date": "2020-06-11", "mean_ic": 0.9050180072028812}, {"date": "2020-06-12", "mean_ic": 0.9054485794317728}, {"date": "2020-06-15", "mean_ic": 0.9055542216886755}, {"date": "2020-06-16", "mean_ic": 0.9057414965986396}, {"date": "2020-06-17", "mean_ic": 0.9055382152861144}, {"date": "2020-06-18", "mean_ic": 0.9060888355342136}, {"date": "2020-06-19", "mean_ic": 0.9059719887955182}, {"date": "2020-06-22", "mean_ic": 0.9062360944377751}, {"date": "2020-06-23", "mean_ic": 0.9061048419367748}, {"date": "2020-06-24", "mean_ic": 0.9068363345338135}, {"date": "2020-06-25", "mean_ic": 0.9047106842737094}, {"date": "2020-06-26", "mean_ic": 0.9044273709483794}, {"date": "2020-06-29", "mean_ic": 0.904579431772709}, {"date": "2020-06-30", "mean_ic": 0.9061768707482993}, {"date": "2020-07-01", "mean_ic": 0.9052773109243698}, {"date": "2020-07-02", "mean_ic": 0.9029723889555823}, {"date": "2020-07-03", "mean_ic": 0.9040208083233293}, {"date": "2020-07-06", "mean_ic": 0.9045042016806722}, {"date": "2020-07-07", "mean_ic": 0.9043185274109644}, {"date": "2020-07-08", "mean_ic": 0.9049939975990395}, {"date": "2020-07-09", "mean_ic": 0.9045906362545019}, {"date": "2020-07-10", "mean_ic": 0.9040096038415366}, {"date": "2020-07-13", "mean_ic": 0.9043729491796719}, {"date": "2020-07-14", "mean_ic": 0.9036254501800721}, {"date": "2020-07-15", "mean_ic": 0.9043073229291717}, {"date": "2020-07-16", "mean_ic": 0.9036478591436574}, {"date": "2020-07-17", "mean_ic": 0.9038783513405363}, {"date": "2020-07-20", "mean_ic": 0.904032012805122}, {"date": "2020-07-21", "mean_ic": 0.9044577831132453}, {"date": "2020-07-22", "mean_ic": 0.9045730292116847}, {"date": "2020-07-23", "mean_ic": 0.9059815926370548}, {"date": "2020-07-24", "mean_ic": 0.9055126050420168}, {"date": "2020-07-27", "mean_ic": 0.9051828731492596}, {"date": "2020-07-28", "mean_ic": 0.9042368947579031}, {"date": "2020-07-29", "mean_ic": 0.9040736294517807}, {"date": "2020-07-30", "mean_ic": 0.9041408563425369}, {"date": "2020-07-31", "mean_ic": 0.9042256902761104}, {"date": "2020-08-03", "mean_ic": 0.903343737494998}, {"date": "2020-08-04", "mean_ic": 0.9029179671868747}, {"date": "2020-08-05", "mean_ic": 0.9040080032012805}, {"date": "2020-08-06", "mean_ic": 0.9048003201280513}, {"date": "2020-08-07", "mean_ic": 0.9047378951580634}, {"date": "2020-08-10", "mean_ic": 0.9055430172068827}, {"date": "2020-08-11", "mean_ic": 0.9058999599839936}, {"date": "2020-08-12", "mean_ic": 0.9052709083633453}, {"date": "2020-08-13", "mean_ic": 0.9062152861144457}, {"date": "2020-08-14", "mean_ic": 0.9049827931172468}, {"date": "2020-08-17", "mean_ic": 0.9042368947579031}, {"date": "2020-08-18", "mean_ic": 0.904187274909964}, {"date": "2020-08-19", "mean_ic": 0.9030092036814725}, {"date": "2020-08-20", "mean_ic": 0.9027274909963985}, {"date": "2020-08-21", "mean_ic": 0.9030380152060824}, {"date": "2020-08-24", "mean_ic": 0.9026538615446178}, {"date": "2020-08-25", "mean_ic": 0.9029787915166066}, {"date": "2020-08-26", "mean_ic": 0.9033245298119248}, {"date": "2020-08-27", "mean_ic": 0.9010388155262105}, {"date": "2020-08-28", "mean_ic": 0.9014005602240897}, {"date": "2020-08-31", "mean_ic": 0.9017462985194078}, {"date": "2020-09-01", "mean_ic": 0.9020312124849941}, {"date": "2020-09-02", "mean_ic": 0.9016966786714686}, {"date": "2020-09-03", "mean_ic": 0.9017847138855543}, {"date": "2020-09-04", "mean_ic": 0.9016758703481392}, {"date": "2020-09-07", "mean_ic": 0.9019591836734693}, {"date": "2020-09-08", "mean_ic": 0.9031388555422168}, {"date": "2020-09-09", "mean_ic": 0.9031660664265705}, {"date": "2020-09-10", "mean_ic": 0.9035518207282913}, {"date": "2020-09-11", "mean_ic": 0.9036926770708283}, {"date": "2020-09-14", "mean_ic": 0.9020888355342136}, {"date": "2020-09-15", "mean_ic": 0.900968387354942}, {"date": "2020-09-16", "mean_ic": 0.9001760704281713}, {"date": "2020-09-17", "mean_ic": 0.9019863945578233}, {"date": "2020-09-18", "mean_ic": 0.9022569027611044}, {"date": "2020-09-21", "mean_ic": 0.9013989595838334}, {"date": "2020-09-22", "mean_ic": 0.9017302921168467}, {"date": "2020-09-23", "mean_ic": 0.9026954781912766}, {"date": "2020-09-24", "mean_ic": 0.9047619047619048}, {"date": "2020-09-25", "mean_ic": 0.9045026010404161}, {"date": "2020-09-28", "mean_ic": 0.904046418567427}, {"date": "2020-09-29", "mean_ic": 0.9022280912364946}, {"date": "2020-09-30", "mean_ic": 0.9025274109643857}, {"date": "2020-10-01", "mean_ic": 0.9031500600240095}, {"date": "2020-10-02", "mean_ic": 0.9041856742697079}, {"date": "2020-10-05", "mean_ic": 0.9036542617046819}, {"date": "2020-10-06", "mean_ic": 0.9046434573829532}, {"date": "2020-10-07", "mean_ic": 0.904408163265306}, {"date": "2020-10-08", "mean_ic": 0.9030300120048019}, {"date": "2020-10-09", "mean_ic": 0.9017446978791516}, {"date": "2020-10-12", "mean_ic": 0.9021160464185675}, {"date": "2020-10-13", "mean_ic": 0.9010740296118448}, {"date": "2020-10-14", "mean_ic": 0.9011828731492597}, {"date": "2020-10-15", "mean_ic": 0.900829131652661}, {"date": "2020-10-16", "mean_ic": 0.9015670268107242}, {"date": "2020-10-19", "mean_ic": 0.9016438575430172}, {"date": "2020-10-20", "mean_ic": 0.9018375350140055}, {"date": "2020-10-21", "mean_ic": 0.900656262505002}, {"date": "2020-10-22", "mean_ic": 0.8986890756302521}, {"date": "2020-10-23", "mean_ic": 0.8978503401360544}, {"date": "2020-10-26", "mean_ic": 0.898421768707483}, {"date": "2020-10-27", "mean_ic": 0.8987194877951181}, {"date": "2020-10-28", "mean_ic": 0.8983353341336534}, {"date": "2020-10-29", "mean_ic": 0.8987306922769107}, {"date": "2020-10-30", "mean_ic": 0.8978103241296519}, {"date": "2020-11-02", "mean_ic": 0.8973477390956383}, {"date": "2020-11-03", "mean_ic": 0.8980216086434574}, {"date": "2020-11-04", "mean_ic": 0.8981512605042017}, {"date": "2020-11-05", "mean_ic": 0.8981656662665066}, {"date": "2020-11-06", "mean_ic": 0.8995758303321328}, {"date": "2020-11-09", "mean_ic": 0.8995246098439375}, {"date": "2020-11-10", "mean_ic": 0.899655862344938}, {"date": "2020-11-11", "mean_ic": 0.9001696678671468}, {"date": "2020-11-12", "mean_ic": 0.9001632653061225}, {"date": "2020-11-13", "mean_ic": 0.8992236894757905}, {"date": "2020-11-16", "mean_ic": 0.8998079231692677}, {"date": "2020-11-17", "mean_ic": 0.9000112044817927}, {"date": "2020-11-18", "mean_ic": 0.900014405762305}, {"date": "2020-11-19", "mean_ic": 0.90121968787515}, {"date": "2020-11-20", "mean_ic": 0.9015078031212486}, {"date": "2020-11-23", "mean_ic": 0.9007875150060023}, {"date": "2020-11-24", "mean_ic": 0.9006802721088435}, {"date": "2020-11-25", "mean_ic": 0.9007474989995998}, {"date": "2020-11-26", "mean_ic": 0.9019095638255302}, {"date": "2020-11-27", "mean_ic": 0.9014565826330532}, {"date": "2020-11-30", "mean_ic": 0.9001696678671468}, {"date": "2020-12-01", "mean_ic": 0.8992076830732293}, {"date": "2020-12-02", "mean_ic": 0.8989003601440577}, {"date": "2020-12-03", "mean_ic": 0.8970212084833933}, {"date": "2020-12-04", "mean_ic": 0.8972404961984795}, {"date": "2020-12-07", "mean_ic": 0.8981224489795919}, {"date": "2020-12-08", "mean_ic": 0.8994157663065226}, {"date": "2020-12-09", "mean_ic": 0.8996510604241696}, {"date": "2020-12-10", "mean_ic": 0.8991548619447779}, {"date": "2020-12-11", "mean_ic": 0.899078031212485}, {"date": "2020-12-14", "mean_ic": 0.9000352140856342}, {"date": "2020-12-15", "mean_ic": 0.8996798719487794}, {"date": "2020-12-16", "mean_ic": 0.8998959583833535}, {"date": "2020-12-17", "mean_ic": 0.9004273709483793}, {"date": "2020-12-18", "mean_ic": 0.9000464185674271}, {"date": "2020-12-21", "mean_ic": 0.9007298919567827}, {"date": "2020-12-22", "mean_ic": 0.9020984393757503}, {"date": "2020-12-23", "mean_ic": 0.9015414165666267}, {"date": "2020-12-24", "mean_ic": 0.9017559023609444}, {"date": "2020-12-25", "mean_ic": 0.9016182472989196}, {"date": "2020-12-28", "mean_ic": 0.9021352541016406}, {"date": "2020-12-29", "mean_ic": 0.9019095638255301}, {"date": "2020-12-30", "mean_ic": 0.9016758703481392}, {"date": "2020-12-31", "mean_ic": 0.9023145258103241}, {"date": "2021-01-01", "mean_ic": 0.9030652260904362}, {"date": "2021-01-04", "mean_ic": 0.9030876350540216}, {"date": "2021-01-05", "mean_ic": 0.9032428971588635}, {"date": "2021-01-06", "mean_ic": 0.9036590636254502}, {"date": "2021-01-07", "mean_ic": 0.9038527410964385}, {"date": "2021-01-08", "mean_ic": 0.903327731092437}, {"date": "2021-01-11", "mean_ic": 0.9029275710284115}, {"date": "2021-01-12", "mean_ic": 0.9018663465386154}, {"date": "2021-01-13", "mean_ic": 0.9014981992797119}, {"date": "2021-01-14", "mean_ic": 0.9037919167667067}, {"date": "2021-01-15", "mean_ic": 0.9052661064425771}, {"date": "2021-01-18", "mean_ic": 0.9052917166866746}, {"date": "2021-01-19", "mean_ic": 0.9046594637855141}, {"date": "2021-01-20", "mean_ic": 0.905467787114846}, {"date": "2021-01-21", "mean_ic": 0.9052468987595038}, {"date": "2021-01-22", "mean_ic": 0.9063593437374949}, {"date": "2021-01-25", "mean_ic": 0.9059319727891156}, {"date": "2021-01-26", "mean_ic": 0.9050420168067227}, {"date": "2021-01-27", "mean_ic": 0.9058727490996399}, {"date": "2021-01-28", "mean_ic": 0.9058919567827132}, {"date": "2021-01-29", "mean_ic": 0.9058535414165667}, {"date": "2021-02-01", "mean_ic": 0.906029611844738}, {"date": "2021-02-02", "mean_ic": 0.9058967587034813}, {"date": "2021-02-03", "mean_ic": 0.9064905962384954}, {"date": "2021-02-04", "mean_ic": 0.9055878351340536}, {"date": "2021-02-05", "mean_ic": 0.9059767907162865}, {"date": "2021-02-08", "mean_ic": 0.9054293717486995}, {"date": "2021-02-09", "mean_ic": 0.906093637454982}, {"date": "2021-02-10", "mean_ic": 0.9065978391356543}, {"date": "2021-02-11", "mean_ic": 0.9072124849939976}, {"date": "2021-02-12", "mean_ic": 0.9071292517006803}, {"date": "2021-02-15", "mean_ic": 0.9078351340536215}, {"date": "2021-02-16", "mean_ic": 0.9062472989195679}, {"date": "2021-02-17", "mean_ic": 0.9058903561424569}, {"date": "2021-02-18", "mean_ic": 0.9050212084833933}, {"date": "2021-02-19", "mean_ic": 0.9049123649459784}, {"date": "2021-02-22", "mean_ic": 0.9057110844337736}, {"date": "2021-02-23", "mean_ic": 0.9063193277310924}, {"date": "2021-02-24", "mean_ic": 0.9065098039215687}, {"date": "2021-02-25", "mean_ic": 0.9076622649059624}, {"date": "2021-02-26", "mean_ic": 0.9073373349339736}, {"date": "2021-03-01", "mean_ic": 0.9076990796318527}, {"date": "2021-03-02", "mean_ic": 0.9072012805122048}, {"date": "2021-03-03", "mean_ic": 0.9075790316126451}, {"date": "2021-03-04", "mean_ic": 0.908422569027611}, {"date": "2021-03-05", "mean_ic": 0.9085138055222088}, {"date": "2021-03-08", "mean_ic": 0.9084545818327331}, {"date": "2021-03-09", "mean_ic": 0.9075022008803522}, {"date": "2021-03-10", "mean_ic": 0.9068411364545818}, {"date": "2021-03-11", "mean_ic": 0.9068523409363746}, {"date": "2021-03-12", "mean_ic": 0.9079135654261704}, {"date": "2021-03-15", "mean_ic": 0.9068987595038016}, {"date": "2021-03-16", "mean_ic": 0.9060120048019208}, {"date": "2021-03-17", "mean_ic": 0.9060856342537015}, {"date": "2021-03-18", "mean_ic": 0.90596718687475}, {"date": "2021-03-19", "mean_ic": 0.9063513405362146}, {"date": "2021-03-22", "mean_ic": 0.9055526210484194}, {"date": "2021-03-23", "mean_ic": 0.9037310924369748}, {"date": "2021-03-24", "mean_ic": 0.9035838335334134}, {"date": "2021-03-25", "mean_ic": 0.9045330132052821}, {"date": "2021-03-26", "mean_ic": 0.9046114445778312}, {"date": "2021-03-29", "mean_ic": 0.9041088435374149}, {"date": "2021-03-30", "mean_ic": 0.9047699079631852}, {"date": "2021-03-31", "mean_ic": 0.9043873549419768}, {"date": "2021-04-01", "mean_ic": 0.9039599839935976}, {"date": "2021-04-02", "mean_ic": 0.9039119647859144}, {"date": "2021-04-05", "mean_ic": 0.9044977991196478}, {"date": "2021-04-06", "mean_ic": 0.9057943177270908}, {"date": "2021-04-07", "mean_ic": 0.9066890756302521}, {"date": "2021-04-08", "mean_ic": 0.9065514205682274}, {"date": "2021-04-09", "mean_ic": 0.905389355742297}, {"date": "2021-04-12", "mean_ic": 0.9049875950380152}, {"date": "2021-04-13", "mean_ic": 0.9045698279311726}, {"date": "2021-04-14", "mean_ic": 0.904376150460184}, {"date": "2021-04-15", "mean_ic": 0.9040528211284513}, {"date": "2021-04-16", "mean_ic": 0.9040064025610245}, {"date": "2021-04-19", "mean_ic": 0.9046466586634654}, {"date": "2021-04-20", "mean_ic": 0.9042689075630252}, {"date": "2021-04-21", "mean_ic": 0.9043633453381352}, {"date": "2021-04-22", "mean_ic": 0.9038239295718288}, {"date": "2021-04-23", "mean_ic": 0.9037166866746699}, {"date": "2021-04-26", "mean_ic": 0.9046194477791116}, {"date": "2021-04-27", "mean_ic": 0.9050340136054422}, {"date": "2021-04-28", "mean_ic": 0.9049635854341738}, {"date": "2021-04-29", "mean_ic": 0.9057703081232493}, {"date": "2021-04-30", "mean_ic": 0.9058055222088836}, {"date": "2021-05-03", "mean_ic": 0.9052020808323328}, {"date": "2021-05-04", "mean_ic": 0.9040576230492197}, {"date": "2021-05-05", "mean_ic": 0.9045538215286114}, {"date": "2021-05-06", "mean_ic": 0.9046162464985995}, {"date": "2021-05-07", "mean_ic": 0.9049587835134054}, {"date": "2021-05-10", "mean_ic": 0.905373349339736}, {"date": "2021-05-11", "mean_ic": 0.9053765506202481}, {"date": "2021-05-12", "mean_ic": 0.90593837535014}, {"date": "2021-05-13", "mean_ic": 0.9049123649459785}, {"date": "2021-05-14", "mean_ic": 0.9054629851940776}, {"date": "2021-05-17", "mean_ic": 0.9056342537014805}, {"date": "2021-05-18", "mean_ic": 0.9050660264105642}, {"date": "2021-05-19", "mean_ic": 0.9058311324529812}, {"date": "2021-05-20", "mean_ic": 0.905234093637455}, {"date": "2021-05-21", "mean_ic": 0.9054789915966386}, {"date": "2021-05-24", "mean_ic": 0.9054293717486994}, {"date": "2021-05-25", "mean_ic": 0.9054821928771509}, {"date": "2021-05-26", "mean_ic": 0.9044657863145259}, {"date": "2021-05-27", "mean_ic": 0.9041664665866347}, {"date": "2021-05-28", "mean_ic": 0.9048211284513806}, {"date": "2021-05-31", "mean_ic": 0.9045570228091238}, {"date": "2021-06-01", "mean_ic": 0.9053381352541016}, {"date": "2021-06-02", "mean_ic": 0.9034589835934373}, {"date": "2021-06-03", "mean_ic": 0.9029915966386555}, {"date": "2021-06-04", "mean_ic": 0.9019079631852741}, {"date": "2021-06-07", "mean_ic": 0.9027466986794718}, {"date": "2021-06-08", "mean_ic": 0.9034141656662665}, {"date": "2021-06-09", "mean_ic": 0.9027226890756302}, {"date": "2021-06-10", "mean_ic": 0.9023497398959583}, {"date": "2021-06-11", "mean_ic": 0.9019895958383353}, {"date": "2021-06-14", "mean_ic": 0.9030044017607043}, {"date": "2021-06-15", "mean_ic": 0.9046642657062824}, {"date": "2021-06-16", "mean_ic": 0.9046786714685875}, {"date": "2021-06-17", "mean_ic": 0.90462424969988}, {"date": "2021-06-18", "mean_ic": 0.9036206482593038}, {"date": "2021-06-21", "mean_ic": 0.9037294917967188}, {"date": "2021-06-22", "mean_ic": 0.9035166066426571}, {"date": "2021-06-23", "mean_ic": 0.9034445778311325}, {"date": "2021-06-24", "mean_ic": 0.9024633853541416}, {"date": "2021-06-25", "mean_ic": 0.9015878351340536}, {"date": "2021-06-28", "mean_ic": 0.9017751100440177}, {"date": "2021-06-29", "mean_ic": 0.9018983593437375}, {"date": "2021-06-30", "mean_ic": 0.9025098039215685}, {"date": "2021-07-01", "mean_ic": 0.9020104041616647}, {"date": "2021-07-02", "mean_ic": 0.901469387755102}, {"date": "2021-07-05", "mean_ic": 0.9017911164465786}, {"date": "2021-07-06", "mean_ic": 0.9026154461784713}, {"date": "2021-07-07", "mean_ic": 0.902641056422569}, {"date": "2021-07-08", "mean_ic": 0.9024969987995198}, {"date": "2021-07-09", "mean_ic": 0.9025786314525811}, {"date": "2021-07-12", "mean_ic": 0.9029563825530212}, {"date": "2021-07-13", "mean_ic": 0.902500200080032}, {"date": "2021-07-14", "mean_ic": 0.9020840336134454}];
+  const DECAY = [{"h": 1, "horizon": "H1", "mean_ic": 0.9047207683073227, "std_ic": 0.0318446330450592, "n": 400}, {"h": 5, "horizon": "H5", "mean_ic": 0.7486897959183674, "std_ic": 0.07065139337997466, "n": 400}, {"h": 10, "horizon": "H10", "mean_ic": 0.4487478991596639, "std_ic": 0.11774755437659132, "n": 400}, {"h": 20, "horizon": "H20", "mean_ic": 0.09138391356542616, "std_ic": 0.13249659180444864, "n": 400}];
+  const FIT = {"A": 1.252570881456965, "tau": 8.027951758736625, "half_life": 5.564552127239546};
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const el = (n, a={}) => { const e = document.createElementNS(SVGNS, n);
+    for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const fmt = (x, dp=4) => (x == null || isNaN(x)) ? "—" : Number(x).toFixed(dp);
+
+  function lineChart(svgId, pts, yKey, label) {
+    const svg = document.getElementById(svgId); svg.textContent = "";
+    const W=760,H=280,padL=52,padR=16,padT=20,padB=36;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const ys = pts.map(p => p[yKey]).filter(v => v != null && !isNaN(v));
+    if (!ys.length) {
+      const t=el("text",{x:W/2,y:H/2,"text-anchor":"middle","font-size":14,fill:css("--ink-3")});
+      t.textContent="无数据"; svg.appendChild(t); return;
+    }
+    const ymin = Math.min(...ys, 0), ymax = Math.max(...ys, 0);
+    const pad = Math.max((ymax - ymin) * 0.12, 0.01);
+    const y0 = ymin - pad, y1 = ymax + pad;
+    const xOf = i => padL + (pts.length <= 1 ? plotW/2 : i / (pts.length - 1) * plotW);
+    const yOf = v => padT + (1 - (v - y0) / (y1 - y0)) * plotH;
+    const ink3=css("--ink-3"), hair=css("--hair"), hairS=css("--hair-strong"),
+          accent=css("--accent"), up=css("--up"), down=css("--down");
+    [0, (y0+y1)/2, y1, y0].forEach(v => {
+      const y=yOf(v);
+      svg.appendChild(el("line",{x1:padL,y1:y,x2:W-padR,y2:y,
+        stroke:Math.abs(v)<1e-12?hairS:hair,"stroke-width":Math.abs(v)<1e-12?1.3:1,
+        "stroke-dasharray":Math.abs(v)<1e-12?"0":"3 4"}));
+      const t=el("text",{x:padL-8,y:y+4,"text-anchor":"end","font-size":11,fill:ink3});
+      t.textContent=fmt(v,3); svg.appendChild(t);
+    });
+    let d="";
+    pts.forEach((p,i) => {
+      const v=p[yKey]; if (v==null||isNaN(v)) return;
+      d += (d?" L":"M")+xOf(i)+","+yOf(v);
+    });
+    if (d) svg.appendChild(el("path",{d,fill:"none",stroke:accent,"stroke-width":2}));
+    // zero line already drawn; end labels
+    if (pts.length) {
+      const t0=el("text",{x:padL,y:H-10,"font-size":11,fill:ink3}); t0.textContent=pts[0].date||""; svg.appendChild(t0);
+      const t1=el("text",{x:W-padR,y:H-10,"text-anchor":"end","font-size":11,fill:ink3});
+      t1.textContent=pts[pts.length-1].date||""; svg.appendChild(t1);
+    }
+    const lab=el("text",{x:padL+4,y:padT+12,"font-size":12,fill:ink3}); lab.textContent=label; svg.appendChild(lab);
+  }
+
+  function decayChart() {
+    const svg = document.getElementById("decay"); svg.textContent = "";
+    const W=760,H=280,padL=52,padR=16,padT=20,padB=40;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    if (!DECAY.length) {
+      const t=el("text",{x:W/2,y:H/2,"text-anchor":"middle","font-size":14,fill:css("--ink-3")});
+      t.textContent="单周期模式（无多周期衰减曲线）"; svg.appendChild(t); return;
+    }
+    const hs = DECAY.map(d => d.h);
+    const ics = DECAY.map(d => d.mean_ic);
+    const hmin=Math.min(...hs), hmax=Math.max(...hs);
+    const ymin=Math.min(...ics,0), ymax=Math.max(...ics,0);
+    const pad=Math.max((ymax-ymin)*0.15, 0.005);
+    const y0=ymin-pad, y1=ymax+pad;
+    const xOf = h => padL + ((h - hmin) / Math.max(hmax - hmin, 1)) * plotW;
+    const yOf = v => padT + (1 - (v - y0) / (y1 - y0)) * plotH;
+    const ink3=css("--ink-3"), hair=css("--hair"), hairS=css("--hair-strong"),
+          accent=css("--accent"), up=css("--up");
+    [0].forEach(v => {
+      const y=yOf(v);
+      svg.appendChild(el("line",{x1:padL,y1:y,x2:W-padR,y2:y,stroke:hairS,"stroke-width":1.3}));
+    });
+    // fitted curve
+    if (FIT && FIT.A != null && FIT.tau != null && FIT.tau > 0) {
+      let d="";
+      for (let i=0;i<=40;i++) {
+        const h = hmin + (hmax-hmin)*i/40;
+        const v = FIT.A * Math.exp(-h / FIT.tau);
+        d += (i?" L":"M")+xOf(h)+","+yOf(v);
+      }
+      svg.appendChild(el("path",{d,fill:"none",stroke:accent,"stroke-width":1.5,"stroke-dasharray":"5 4"}));
+    }
+    DECAY.forEach(p => {
+      svg.appendChild(el("circle",{cx:xOf(p.h),cy:yOf(p.mean_ic),r:5,fill:p.mean_ic>=0?up:css("--down")}));
+      const t=el("text",{x:xOf(p.h),y:H-14,"text-anchor":"middle","font-size":11,fill:ink3});
+      t.textContent="H"+p.h; svg.appendChild(t);
+    });
+  }
+
+  function decayTable() {
+    const tb=document.querySelector("#dtbl tbody");
+    DECAY.forEach(d => {
+      const tr=document.createElement("tr");
+      const cls=d.mean_ic>=0?"up":"down";
+      tr.innerHTML=`<td>H${d.h}</td><td class="${cls}">${fmt(d.mean_ic)}</td>`+
+        `<td>${fmt(d.std_ic)}</td><td>${d.n}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+
+  // downsample rolling for SVG readability
+  const step = Math.max(1, Math.floor(ROLL.length / 180));
+  const rollPts = ROLL.filter((_,i)=>i%step===0).map(r=>({date:r.date, ic:r.mean_ic}));
+  lineChart("roll", rollPts, "ic", "rolling mean IC");
+  decayChart(); decayTable();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    lineChart("roll", rollPts, "ic", "rolling mean IC"); decayChart();
+  });
+</script>
+</body>
+</html>

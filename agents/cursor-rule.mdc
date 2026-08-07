@@ -1,0 +1,17 @@
+---
+description: Use factor-ic-decay to diagnose factor predictive-power decay via Spearman IC, ICIR, Newey-West significance, rolling stability, and multi-horizon half-life.
+alwaysApply: false
+---
+
+# Factor IC Decay
+
+When the user asks about factor IC decay, IC half-life, ICIR, predictive-power
+fade, or whether a factor's IC is stable (因子IC衰减 / IC半衰期 / 因子稳不稳 /
+预测力衰退 / 因子还能用多久), read
+`.cursor/skills/factor-ic-decay/SKILL.md` and follow its workflow.
+
+Read `.cursor/skills/factor-ic-decay/references/ic-methods.md` for method
+definitions and `references/source_boundary.md` for evidence limits. Use
+`scripts/ic_decay.py` for deterministic calculations. Always show the data
+window, IC observation count, NW-t / ICIR, and half-life caveats; do not turn
+decay diagnostics into a buy/sell signal.
